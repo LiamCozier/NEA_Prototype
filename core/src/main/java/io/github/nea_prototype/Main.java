@@ -21,8 +21,10 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
+        float deltaT = Gdx.graphics.getDeltaTime();
         g.take_input();
-        g.render(Gdx.graphics.getDeltaTime());
+        g.physics_process(deltaT);
+        g.render(deltaT);
     }
 
     @Override

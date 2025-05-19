@@ -5,11 +5,16 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import io.github.nea_prototype.physics.RigidBody;
+import io.github.nea_prototype.physics.PhysicsManager;
+import io.github.nea_prototype.physics.hitboxes.RectHitbox;
+import io.github.nea_prototype.physics.objects.RigidBody;
+import io.github.nea_prototype.physics.objects.StaticBody;
 import io.github.nea_prototype.tileset.*;
+
 
 public class Game {
 
@@ -17,6 +22,8 @@ public class Game {
     SpriteBatch batch;
     TileSet tile_set;
 
+    RigidBody box = new RigidBody(new RectHitbox(1, 1), new Vector2(0, 0), new Vector2(1, 10));
+    StaticBody platform = new StaticBody(new RectHitbox(5, 1), new Vector2(2, 0));
 
     public Game() {
 
@@ -32,9 +39,6 @@ public class Game {
         // init tileset
         tile_set = new TileSet(new Vector2(0, 0), new WoodsTileMap());
         tile_set.import_tile_chunk("TileSets/something.csv");
-
-
-
     }
 
     public void take_input() {camera_input();}
@@ -46,10 +50,34 @@ public class Game {
         batch.begin();
         tile_set.render(batch);
         batch.end();
+
+        ShapeRenderer sr = new ShapeRenderer();
+        sr.setProjectionMatrix(camera.combined);
+        sr.setColor(Color.WHITE);
+
+        if (PhysicsManager.AABB_overlap(box, platform)) {
+            sr.setColor(Color.LIME);
+        }
+
+
+        sr.begin(ShapeRenderer.ShapeType.Line);
+        float[] poly = box.shape().get_polygon();
+        for (int i=0; i<poly.length; i+=2) {
+            poly[i] += box.position().x;
+            poly[i+1] += box.position().y;
+        }
+        sr.polygon(poly);
+        poly = platform.shape().get_polygon();
+        for (int i=0; i<poly.length; i+=2) {
+            poly[i] += platform.position().x;
+            poly[i+1] += platform.position().y;
+        }
+        sr.polygon(poly);
+        sr.end();
     }
 
     public void physics_process(float deltaT) {
-
+        box.step(deltaT);
     }
 
     //temp
