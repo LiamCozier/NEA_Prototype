@@ -5,15 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class TileMap {
     protected Texture texture_atlas;
+    protected int atlas_width = 11, atlas_height = 5;
     protected int tile_width;
     protected int tile_height;
-    protected Vector2[] tile_atlas_positions;
 
     public TileMap(Texture texture_atlas, int tile_width, int tile_height) {
         this.texture_atlas = texture_atlas;
         this.tile_width = tile_width;
-        this.tile_height = tile_height;
-        this.tile_atlas_positions = init_tile_atlas_positions();
+        this.tile_height = tile_height;;
     }
 
     public int tile_width() {
@@ -32,10 +31,9 @@ public abstract class TileMap {
         this.tile_height = tile_height;
     }
 
-    protected abstract Vector2[] init_tile_atlas_positions();
 
     public Vector2 get_tile_atlas_position(int tile_id) {
-        return tile_atlas_positions[tile_id];
+        return new Vector2(tile_id % atlas_width, tile_id / atlas_width);
     }
 
 }

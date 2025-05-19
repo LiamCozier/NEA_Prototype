@@ -1,12 +1,14 @@
 package io.github.nea_prototype.tileset;
 
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class TileSet {
 
@@ -52,5 +54,42 @@ public class TileSet {
         }
     }
 
+    public void import_tile_chunk(String file_name) {
 
+        // Read file
+        List<String[]> tile_chunk_list = new ArrayList<>(0);
+        try {
+            FileHandle tile_file = Gdx.files.internal(file_name);
+            Scanner scan = new Scanner(tile_file.read());
+            while (scan.hasNextLine()) {
+                String data = scan.nextLine();
+                // List of arrays of strings
+                tile_chunk_list.add(data.split(","));
+            }
+            scan.close();
+        } catch (Exception e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        String[][] tile_chunk = new String[tile_chunk_list.size()][];
+        for (int i=0; i<tile_chunk_list.size(); i++) {
+            tile_chunk[i] = tile_chunk_list.get(i);
+        }
+
+        for (int i=0; i<tile_chunk.length; i++) {
+            for (int j=0; j<tile_chunk[0].length; j++) {
+                int id = Integer.parseInt(tile_chunk[i][j]);
+
+                // empty tile
+                if (id == -1) {
+                    continue;
+                }
+
+                this.add_tile(
+                    new Vector2(j, tile_chunk.length-i), id);
+            }
+        }
+
+    }
 }

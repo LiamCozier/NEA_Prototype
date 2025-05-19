@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import io.github.nea_prototype.physics.RigidBody;
 import io.github.nea_prototype.tileset.*;
 
 public class Game {
@@ -15,6 +16,7 @@ public class Game {
     OrthographicCamera camera;
     SpriteBatch batch;
     TileSet tile_set;
+
 
     public Game() {
 
@@ -29,11 +31,8 @@ public class Game {
 
         // init tileset
         tile_set = new TileSet(new Vector2(0, 0), new WoodsTileMap());
-        tile_set.add_tile(new Vector2(0, 0), 0);
-        tile_set.add_tile(new Vector2(1, 0), 0);
-        tile_set.add_tile(new Vector2(1, 1), 0);
-        tile_set.add_tile(new Vector2(1, 2), 0);
-        tile_set.add_tile(new Vector2(2, 2), 0);
+        tile_set.import_tile_chunk("TileSets/something.csv");
+
 
 
     }
@@ -49,22 +48,26 @@ public class Game {
         batch.end();
     }
 
+    public void physics_process(float deltaT) {
+
+    }
+
     //temp
     public void camera_input() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            camera.translate(0, 1);
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            camera.translate(0, 0.25f);
             camera.update();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            camera.translate(0, -1);
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            camera.translate(0, -0.25f);
             camera.update();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-            camera.translate(-1, 0);
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            camera.translate(-0.25f, 0);
             camera.update();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            camera.translate(1, 0);
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            camera.translate(0.25f, 0);
             camera.update();
         }
     }
