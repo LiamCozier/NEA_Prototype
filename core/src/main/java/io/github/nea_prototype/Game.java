@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.github.nea_prototype.physics.PhysicsManager;
 import io.github.nea_prototype.physics.hitboxes.RectHitbox;
+import io.github.nea_prototype.physics.objects.PhysicsObject;
 import io.github.nea_prototype.physics.objects.RigidBody;
 import io.github.nea_prototype.physics.objects.StaticBody;
 import io.github.nea_prototype.tileset.*;
@@ -52,28 +53,26 @@ public class Game {
         batch.end();
 
         ShapeRenderer sr = new ShapeRenderer();
-        sr.setProjectionMatrix(camera.combined);
         sr.setColor(Color.WHITE);
-
-        if (PhysicsManager.AABB_overlap(box, platform)) {
+        sr.setProjectionMatrix(camera.combined);
+        sr.begin(ShapeRenderer.ShapeType.Line);
+        if (PhysicsManager.separating_axis_overlap(box, platform)) {
             sr.setColor(Color.LIME);
         }
-
-
-        sr.begin(ShapeRenderer.ShapeType.Line);
-        float[] poly = box.shape().get_polygon();
-        for (int i=0; i<poly.length; i+=2) {
-            poly[i] += box.position().x;
-            poly[i+1] += box.position().y;
-        }
-        sr.polygon(poly);
-        poly = platform.shape().get_polygon();
-        for (int i=0; i<poly.length; i+=2) {
-            poly[i] += platform.position().x;
-            poly[i+1] += platform.position().y;
-        }
-        sr.polygon(poly);
+        render_poly(box, sr);
+        render_poly(platform, sr);
         sr.end();
+
+    }
+
+    public void render_poly(PhysicsObject o, ShapeRenderer sr) {
+        Vector2[] vec_poly = o.shape().get_polygon();
+        float[] poly = new float[vec_poly.length * 2];
+        for (int i = 0; i < vec_poly.length; i++) {
+            poly[2 * i] = vec_poly[i].x + o.position().x;
+            poly[2 * i + 1] = vec_poly[i].y + o.position().y;
+        }
+        sr.polygon(poly);
     }
 
     public void physics_process(float deltaT) {
